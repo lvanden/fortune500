@@ -1,4 +1,4 @@
-# DMARC progress for Fortune 500 companies as of 12/29/2020.
+## DMARC progress for Fortune 500 companies as of 12/29/2020.
 Track the top 100 Fortune 500 companies' DMARC progress.
 Scrape 2019 top 100 list.
 
