@@ -9,7 +9,7 @@ Execute the following commands
 ```bash
 python scrape.py
 ```
-Return: .csv file to analyze
+Returns a csv file to analyze
 
 Thanks to Monash Data Fluency for the HTML Web Scrapper tutorial which made this pretty simple to scrape.
 
