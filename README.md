@@ -1,4 +1,4 @@
-# DMARC progress for Fortune 500 companies as of 12/29/2020.
+## DMARC progress for Fortune 500 companies as of 12/29/2020.
 Track the top 100 Fortune 500 companies' DMARC progress.
 Scrape 2019 top 100 list.
 
@@ -9,7 +9,7 @@ Execute the following commands
 ```bash
 python scrape.py
 ```
-Return: .csv file to analyze
+Returns a csv file to analyze
 
 Thanks to Monash Data Fluency for the HTML Web Scrapper tutorial which made this pretty simple to scrape.
 
