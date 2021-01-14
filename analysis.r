@@ -21,6 +21,15 @@ library(viridis)
   # rua domains ----
   rua_df <- company_df %>%
     select(company, policy, domain, rank, rua) %>%
+    # Uncomment to add empty bars as spacers
+    # add_row(company = "", policy = "no DMARC record") %>%
+    # add_row(company = "", policy = "no DMARC record") %>%
+    # add_row(company = "", policy = "p=none") %>%
+    # add_row(company = "", policy = "p=none") %>%
+    # add_row(company = "", policy = "p=quarantine") %>%
+    # add_row(company = "", policy = "p=quarantine") %>%
+    # add_row(company = "", policy = "p=reject") %>%
+    # add_row(company = "", policy = "p=reject") %>%
     mutate(
       # split data for multiple addresses
       rua_domains = strsplit(rua, split = ","),
@@ -30,7 +39,7 @@ library(viridis)
       )
     ) %>%
     arrange(policy, company) 
-  
+   
   #give each company an id
   rua_df$id = 1:nrow(rua_df)
   
@@ -76,12 +85,6 @@ library(viridis)
     )
   # make rua_id discrete for ggplot
   rua_df$rua_id <- as.factor(rua_df$rua_id)
-  
-  # create look up table for DMARC report receivers
-  report_receivers = data.frame(
-    name = c('self', 'dmarcian', 'Agari', 'Proofpoint', 'Valimail', 'Cisco', 'Validity'),
-    name_id = c(1:7)
-  )
 
 
   
@@ -95,38 +98,59 @@ library(viridis)
   label_data$hjust <- ifelse(angle < -90, 1, 0)
   label_data$angle <- ifelse(angle < -90, angle+180, angle)
   
+  
+  # Set a number of 'empty bar' to add at the end of each group
+  empty_bar <- 2
+
+  
   # prepare a data frame for base lines
   base_data <- data %>% 
     group_by(policy) %>% 
-    summarize(start=min(id), end=max(id) ) %>% 
+    # Uncomment to add empty bars for spacing
+    # summarize(start=min(id)+ empty_bar, end=max(id)) %>%
+    summarize(start=min(id), end=max(id)) %>% 
     rowwise() %>% 
     mutate(title=mean(c(start, end)))
   
+  # prepare a data frame for grid (scales)
+  grid_data <- base_data
+  grid_data$end <- grid_data$end[ c( nrow(grid_data), 1:nrow(grid_data)-1)] + 1
+  grid_data$start <- grid_data$start - 1
+  grid_data$end[1] <- 1
+  #grid_data <- grid_data[-1,]
+  
   # Make the plot
+  colorBlindGrey8   <- c("#999999", "#009E73", "#56B4E9",  "#0072B2", 
+                         "#F0E442", "#E69F00", "#CC79A7")
   p <- ggplot(data) +      
     
     # Add the stacked bar
     geom_bar(aes(x=as.factor(id), y=value, fill=rua_id), stat="identity") +
-    scale_fill_viridis(
-      option = "plasma",
-      discrete = TRUE,
-      name = "rua",
-      labels = c("self", 
-                 "dmarcian", 
-                 "Agari", 
-                 "Proofpoint", 
-                 "Vailmail", 
-                 "Cisco", 
-                 "Validity", 
+    scale_fill_manual(
+      values = colorBlindGrey8,
+      name = "DMARC XML Receivers",
+      labels = c("self",
+                 "dmarcian",
+                 "Agari",
+                 "Proofpoint",
+                 "Vailmail",
+                 "Cisco",
+                 "Validity",
                  "no reporting"
                 )
     ) +
-    ylim(-200,max(label_data$tot+50, na.rm=T)) +
+    # Add gray hash lines.
+    geom_segment(data=grid_data, aes(x = end, y = 0, xend = start, yend = 0), colour = "grey", alpha=1, size=0.5 , inherit.aes = FALSE ) +
+    geom_segment(data=grid_data, aes(x = end, y = 30, xend = start, yend = 30), colour = "grey", alpha=1, size=0.5 , inherit.aes = FALSE ) +
+    geom_segment(data=grid_data, aes(x = end, y = 60, xend = start, yend = 60), colour = "grey", alpha=1, size=0.5 , inherit.aes = FALSE ) +
+    geom_segment(data=grid_data, aes(x = end, y = 90, xend = start, yend = 90), colour = "grey", alpha=1, size=0.5 , inherit.aes = FALSE ) +
+    
+    ylim(-200,max(label_data$tot, na.rm=T)+80) +
     theme_minimal() +
     theme(
       legend.key = element_rect(fill = "white", colour = "black"),
-      legend.title = element_text(color = "black", size = 18),
-      legend.text = element_text(color = "black", size = 14),
+      legend.title = element_text(color = "black", size = 12),
+      legend.text = element_text(color = "black", size = 10),
       axis.text = element_blank(),
       axis.title = element_blank(),
       panel.grid = element_blank(),
@@ -136,13 +160,60 @@ library(viridis)
     labs(title = "2020 DMARC Status for the Top 50 Fortune '500' Companies") +
 
     # Add labels on top of each bar (company name)
-    geom_text(data=label_data, aes(x=id, y=tot+10, label=company, hjust=hjust), color="black", fontface="bold",alpha=0.6, size=7, angle= label_data$angle, inherit.aes = FALSE ) +
+    geom_text(data=label_data, aes(x=id, y=tot+10, label=company, hjust=hjust), color="black", fontface="bold",alpha=0.6, size=4, angle= label_data$angle, inherit.aes = FALSE ) +
     
     # Add base line information (policy groups)
-    geom_segment(data=base_data, aes(x = start, y = -5, xend = end, yend = -5), colour = "black", alpha=0.8, size=0.8 , inherit.aes = FALSE )  +
-    geom_text(data=base_data, aes(x = title, y = -18, label=policy), hjust=c(1,1,0,0), colour = "black", alpha=0.8, size=6, fontface="bold", inherit.aes = FALSE)
+    geom_segment(data=base_data, aes(x = start, y = -5, xend = end, yend = -5), colour = "black", alpha=0.8, size=0.6 , inherit.aes = FALSE )  +
+    geom_text(data=base_data, aes(x = title, y = -18, label=policy), hjust=c(1,1,0,0), colour = "black", alpha=0.8, size=4, fontface="bold", inherit.aes = FALSE)
   
   # Save as png
-  ggsave(p, file="output.png", width=25, height=18)
+  ggsave(p, file="output.png", width=15, height=10)
+  
+  # Policy plot ----
+  
+  # update data for empty bars
+  data <- data %>%
+    group_by(id) %>%
+    mutate(
+      policy = if_else(
+        company == "",
+        "no DMARC record",
+        policy
+      ),
+      value = 30/max(as.numeric(rua_count))
+    )
+  
+  data <- data[!duplicated(data$id), ]
+
+  policy_plot <- ggplot(data) +      
+    
+    # Add the stacked bar
+    geom_bar(aes(x=as.factor(id), y=value, fill=policy), stat="identity") +
+    scale_fill_manual(
+      values = c("white", "#E50F0F", "#EC9312", "#117733"),
+      name = "Policy"
+    ) +
+   
+    ylim(-200,max(label_data$tot, na.rm=T)+80) +
+    theme_minimal() +
+    theme(
+      legend.key = element_rect(fill = "white", colour = "black"),
+      legend.title = element_text(color = "black", size = 18),
+      legend.text = element_text(color = "black", size = 14),
+      axis.text = element_blank(),
+      axis.title = element_blank(),
+      panel.grid = element_blank(),
+    ) +
+    coord_polar() +
+
+    # Add labels on top of each bar (company name)
+    geom_text(data=label_data, aes(x=id, y=30+10, label=company, hjust=hjust), color="black", fontface="bold",alpha=0.6, size=4, angle= label_data$angle, inherit.aes = FALSE ) +
+    
+    # Add base line information (policy groups)
+    geom_segment(data=base_data, aes(x = start, y = -5, xend = end, yend = -5), colour = "black", alpha=0.8, size=0.6 , inherit.aes = FALSE )  +
+    geom_text(data=base_data, aes(x = title, y = -18, label=policy), hjust=c(1,1,0,0), colour = "black", alpha=0.8, size=4, fontface="bold", inherit.aes = FALSE)
+    
+  # Save as png
+  ggsave(policy_plot, file="dmarc_policies.png", width=15, height=10)
   
   
