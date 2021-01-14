@@ -117,7 +117,6 @@ library(viridis)
   grid_data$end <- grid_data$end[ c( nrow(grid_data), 1:nrow(grid_data)-1)] + 1
   grid_data$start <- grid_data$start - 1
   grid_data$end[1] <- 1
-  #grid_data <- grid_data[-1,]
   
   # Make the plot
   colorBlindGrey8   <- c("#999999", "#009E73", "#56B4E9",  "#0072B2", 
@@ -183,6 +182,7 @@ library(viridis)
       value = 30/max(as.numeric(rua_count))
     )
   
+  # Remove duplicate orgs so bar height is uniform
   data <- data[!duplicated(data$id), ]
 
   policy_plot <- ggplot(data) +      

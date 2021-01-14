@@ -3,7 +3,7 @@ rank,company,website,domain,dmarc_record
 2,Exxon Mobil,http://www.exxonmobil.com,exxonmobil.com,"""v=DMARC1; p=none; fo=1; rua=mailto:dmarc_rua@emaildefense.proofpoint.com,mailto:dmarcreports@exxonmobil.com; ruf=mailto:dmarcreports@exxonmobil.com"""
 3,Apple,http://www.apple.com,apple.com,"""v=DMARC1; p=quarantine; sp=reject; rua=mailto:d@rua.agari.com; ruf=mailto:d@ruf.agari.com;"""
 4,Berkshire Hathaway,http://www.berkshirehathaway.com,berkshirehathaway.com,"""v=DMARC1;p=reject"""
-5,Amazon.com,http://www.amazon.com,amazon.com,"""v=DMARC1; p=quarantine; pct=100; rua=mailto:dmarc-reports@bounces.amazon.com; ruf=mailto:dmarc-reports@bounces.amazon.com"""
+5,Amazon,http://www.amazon.com,amazon.com,"""v=DMARC1; p=quarantine; pct=100; rua=mailto:dmarc-reports@bounces.amazon.com; ruf=mailto:dmarc-reports@bounces.amazon.com"""
 6,UnitedHealth Group,http://www.unitedhealthgroup.com,unitedhealthgroup.com,"""v=DMARC1; p=reject; sp=none; fo=1; ri=3600; rua=mailto:unitedhealthgroup@rua.agari.com;ruf=mailto:unitedhealthgroup@ruf.agari.com"""
 7,McKesson,http://www.mckesson.com,mckesson.com,"""v=DMARC1; p=none; sp=none; adkim=r; aspf=r; fo=1; "" ""pct=100; rf=afrf; ri=86400; "" ""rua=mailto:mckesson@rua.agari.com,"" ""mailto:dmarc_rua@emaildefense.proofpoint.com,"" ""mailto:dmarc@mckesson.com; "" ""ruf=mailto:mckesson@ruf.agari.com,"" ""mailto:dmarc_ruf@emaildefense.proofpoint.com,"" ""mailto:dmarc@mckesson.com"""
 8,CVS Health,http://www.cvshealth.com,cvshealth.com,"""v=DMARC1; p=reject; fo=1; ri=3600; rua=mailto:aetna@rua.agari.com; ruf=mailto:aetna@ruf.agari.com"""
