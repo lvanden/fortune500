@@ -1,0 +1,7 @@
+Package: fortune500
+Title: DMARC Analysis
+Description: Top Fortune Companies and their DMARC status
+Version: 0.0
+License:
+Author: Lydia Jackson
+Maintainer: Lydia Jackson
