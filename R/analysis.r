@@ -6,7 +6,6 @@ library(viridis)
   # read in csv file
   company_list <- read_csv("fortune_500_companies.csv")
 
-  
   # parse DMARC record ----
   parse_record <- function(company_df) {
     
